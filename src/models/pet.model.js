@@ -1,43 +1,52 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Product = sequelize.define(
-  "Product",
+const Pet = sequelize.define(
+  "Pet",
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate: { notEmpty: true },
     },
-
-    description: {
-      type: DataTypes.TEXT,
+    species: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-
+    breed: {
+      type: DataTypes.STRING,
+    },
+    ageMonths: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
     price: {
       type: DataTypes.FLOAT,
       allowNull: false,
       validate: { min: 0 },
     },
-
-    quantity: {
+    stock: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
       validate: { min: 0 },
     },
-    brand: {
-      type: DataTypes.STRING,
+    vaccinated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
     },
   },
   {
-    tableName: "products",
+    tableName: "pets",
     timestamps: true,
   }
 );
 
-module.exports = Product;
+module.exports = Pet;
