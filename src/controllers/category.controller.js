@@ -1,79 +1,58 @@
-const { User } = require("../models");
-const { hashPassword, comparePassword, signPayload } = require("../utils/security");
+const { Category } = require("../models");
 const { badRequest, created, ok, serverError } = require("../utils/api-response");
 
-exports.register = async (req, res) => {
+exports.getCategories = async (req, res) => {
   try {
-    const { fullName, email, password, phone, address } = req.body;
-
-    if (!fullName || !email || !password) {
-      return badRequest(res, "fullName, email, password are required");
-    }
-
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return badRequest(res, "Email already exists");
-    }
-
-    const passwordHash = hashPassword(password);
-    const user = await User.create({ fullName, email, passwordHash, phone, address });
-
-    return created(
-      res,
-      {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-      },
-      "Register successful"
-    );
+    const categories = await Category.findAll();
+    return ok(res, categories);
   } catch (error) {
     return serverError(res, error);
   }
 };
 
-exports.login = async (req, res) => {
+exports.createCategory = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { name, type } = req.body;
 
-    if (!email || !password) {
-      return badRequest(res, "email and password are required");
+    if (!name || !type) {
+      return badRequest(res, "name and type are required");
     }
 
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return badRequest(res, "Invalid email or password");
-    }
-
-    const matched = comparePassword(password, user.passwordHash);
-    if (!matched) {
-      return badRequest(res, "Invalid email or password");
-    }
-
-    const token = signPayload({ id: user.id, email: user.email, role: user.role });
-
-    return ok(res, {
-      token,
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    const category = await Category.create({ name, type });
+    return created(res, category, "Category created");
   } catch (error) {
     return serverError(res, error);
   }
 };
 
-exports.profile = async (req, res) => {
+exports.updateCategory = async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.id, {
-      attributes: ["id", "fullName", "email", "phone", "address", "role", "createdAt"],
-    });
+    const { id } = req.params;
+    const { name, type } = req.body;
 
-    return ok(res, user);
+    const category = await Category.findByPk(id);
+    if (!category) {
+      return badRequest(res, "Category not found");
+    }
+
+    await category.update({ name, type });
+    return ok(res, category, "Category updated");
+  } catch (error) {
+    return serverError(res, error);
+  }
+};
+
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await Category.findByPk(id);
+    if (!category) {
+      return badRequest(res, "Category not found");
+    }
+
+    await category.destroy();
+    return ok(res, null, "Category deleted");
   } catch (error) {
     return serverError(res, error);
   }
