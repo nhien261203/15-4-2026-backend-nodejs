@@ -4,7 +4,7 @@ const { badRequest, created, ok, serverError } = require("../utils/api-response"
 
 exports.register = async (req, res) => {
   try {
-    const { fullName, email, password, phone, address } = req.body;
+    const { fullName, email, password, phone, address, role } = req.body;
 
     if (!fullName || !email || !password) {
       return badRequest(res, "fullName, email, password are required");
@@ -16,7 +16,8 @@ exports.register = async (req, res) => {
     }
 
     const passwordHash = hashPassword(password);
-    const user = await User.create({ fullName, email, passwordHash, phone, address });
+    const userRole = role || 'customer'; // Default to customer if not provided
+    const user = await User.create({ fullName, email, passwordHash, phone, address, role: userRole });
 
     return created(
       res,

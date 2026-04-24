@@ -4,6 +4,7 @@ const Pet = require("./pet.model");
 const Product = require("./product.model");
 const Order = require("./order.model");
 const OrderItem = require("./order-item.model");
+const BlogPost = require("./blog-post.model");
 
 Category.hasMany(Pet, { foreignKey: "categoryId", onDelete: "SET NULL" });
 Pet.belongsTo(Category, { foreignKey: "categoryId" });
@@ -24,4 +25,5 @@ module.exports = {
   Product,
   Order,
   OrderItem,
+  BlogPost,
 };

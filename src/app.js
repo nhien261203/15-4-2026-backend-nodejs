@@ -6,6 +6,7 @@ const categoryRoutes = require("./routes/category.routes");
 const petRoutes = require("./routes/pet.routes");
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
+const blogRoutes = require("./routes/blog.routes");
 
 const app = express();
 
@@ -16,7 +17,7 @@ app.get("/", (_req, res) => {
   res.json({
     name: "Pet Shop Backend API",
     version: "1.0.0",
-    endpoints: ["/api/auth", "/api/categories", "/api/pets", "/api/products", "/api/orders"],
+    endpoints: ["/api/auth", "/api/categories", "/api/pets", "/api/products", "/api/orders", "/api/blog"],
   });
 });
 
@@ -25,6 +26,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/blog", blogRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: `Route ${req.originalUrl} not found` });
