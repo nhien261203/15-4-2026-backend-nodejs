@@ -14,9 +14,9 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log("✅ DB connected");
 
-    // 2. Sync tables
-    await sequelize.sync({ alter: true });
-    console.log("✅ Tables synced");
+    // 2. Schema management is handled by migrations.
+    //    Avoid sequelize.sync({ alter: true }) here to prevent duplicate ALTER operations.
+    //    Run `npm run migrate` separately after schema changes.
 
     // 3. Start server
     app.listen(PORT, () => {
